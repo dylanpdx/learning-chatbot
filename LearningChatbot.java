@@ -44,14 +44,22 @@ public class LearningChatbot {
 
 			if (input.equals("++done")) {
 				System.exit(0);
-			} else if (input.equals("++save")) {
+			} else if (input.startsWith("++save")) {
+				String filename = "brain";
+				if (input.contains(" ")){
+					filename = input.split(" ")[1]; // Lazy way of doing it
+				}
 				//System.out.println("Saving not yet implemented, sorry!");
-				saveBrain("brain", brain);
+				saveBrain(filename, brain);
 				System.out.println("Brain Saved.");
 				System.exit(0);
 			} else if (input.startsWith("++load")){
-				String path = input.split(" ")[1]; // Lazy way of doing it
-				brain = loadBrain("brain");
+				String filename = "brain";
+				if (input.contains(" ")){
+					filename = input.split(" ")[1]; // Lazy way of doing it
+				}
+
+				brain = loadBrain(filename);
 			} else if (input.equals("++help")) {
 				getHelp();
 			}else {
