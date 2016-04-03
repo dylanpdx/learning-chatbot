@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 import java.util.regex.*;
 
@@ -32,7 +33,6 @@ public class LearningChatbot {
 	 * Invocation method.
 	 */
 	public void beginConversation() {
-		ChatbotBrain cb = new ChatbotBrain();
 
 		Scanner dialog = new Scanner(System.in);
 
@@ -50,12 +50,12 @@ public class LearningChatbot {
 			} else if (input.equals("++help")) {
 				getHelp();
 			}else {
-				cb.decay();
-				cb.digestSentence(input);
+				brain.decay();
+				brain.digestSentence(input);
 			}
 
 			System.out.print("Chatbot? ");
-			System.out.println(cb.buildSentence());
+			System.out.println(brain.buildSentence());
 		}
 	}
 
@@ -94,7 +94,7 @@ public class LearningChatbot {
 	 * The ChatbotBrain holds references to all ChatWords and has various
 	 * methods to decompose and reconstruct sentences.
 	 */
-	static class ChatbotBrain {
+	static class ChatbotBrain implements Serializable {
 		/**
 		 * A tracking of all observed words. Keyed by the String version of
 		 * the ChatWord, to allow uniqueness across all ChatWords
