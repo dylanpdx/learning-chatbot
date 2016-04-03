@@ -1,4 +1,4 @@
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -45,8 +45,13 @@ public class LearningChatbot {
 			if (input.equals("++done")) {
 				System.exit(0);
 			} else if (input.equals("++save")) {
-				System.out.println("Saving not yet implemented, sorry!");
+				//System.out.println("Saving not yet implemented, sorry!");
+				saveBrain("brain", brain);
+				System.out.println("Brain Saved.");
 				System.exit(0);
+			} else if (input.startsWith("++load")){
+				String path = input.split(" ")[1]; // Lazy way of doing it
+				brain = loadBrain("brain");
 			} else if (input.equals("++help")) {
 				getHelp();
 			}else {
@@ -58,6 +63,41 @@ public class LearningChatbot {
 			System.out.println(brain.buildSentence());
 		}
 	}
+
+	/**
+	 * Experimental save function. Badly implemented, too..
+	 *
+	 * @param path Path of save file
+	 */
+	public void saveBrain(String path,ChatbotBrain brain){
+		try{
+			FileOutputStream fileOutputStream = new FileOutputStream(path);
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(brain);
+			objectOutputStream.close();
+		}catch (Exception ex){
+			ex.printStackTrace();
+			System.out.println("Error occured while saving - changes may not be saved!");
+		}
+
+	}
+
+	public ChatbotBrain loadBrain(String path){
+		try {
+			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(path));
+			Object loadedBrain = objectInputStream.readObject();
+			return (ChatbotBrain) loadedBrain;
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Error occured while loading.");
+			return null;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("Error occured while loading.");
+			return null;
+		}
+	}
+
 
 	/**
 	 * Help display
@@ -682,7 +722,7 @@ public class LearningChatbot {
 	 * possible to construct arbitrary length sentences involving a set
 	 * of keywords harvested from statements. Trust me, it's possible.
 	 */
-	static class ChatWord {
+	static class ChatWord implements Serializable {
 		/** The word. */
 		private String word;
 		/** Collection of punctuation observed after this word */
@@ -834,11 +874,12 @@ public class LearningChatbot {
 
 		/**
 		 * ChatWords are equivalent with the String they wrap.
+		 * (Yes, I know, removing this might cause bugs. Wouldn't load with it. Need to investigate further)
 		 */
-		@Override
+		/*@Override
 		public int hashCode() {
 			return word.hashCode();
-		}
+		}*/
 
 		/**
 		 * ChatWord equality is that ChatWords that wrap the same String
